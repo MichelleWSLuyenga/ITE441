@@ -1,0 +1,68 @@
+DROP SCHEMA IF EXISTS COMPANY;
+CREATE SCHEMA IF NOT EXISTS COMPANY;
+USE COMPANY;
+CREATE TABLE EMPLOYEE (
+          FNAME          VARCHAR(20)          NOT NULL,
+          SSN               CHAR(9)                   NOT NULL,
+          BDATE           DATE,
+          ADDRESS     VARCHAR(30),
+          SEX               CHAR,
+          SALARY        DECIMAL(10, 2),
+          SUPER_SSN        CHAR(9),
+          DNO              INT                             NOT NULL,
+          PRIMARY KEY  (SSN)
+);
+CREATE TABLE DEPARTMENT (
+          DNAME          VARCHAR(15)        NOT NULL,
+          DNUMBER     INT                          NOT NULL,
+          MGR_SSN     CHAR(9)                 NOT NULL,
+          MGR_START_DATE    DATE,
+          PRIMARY KEY(DNUMBER),
+          UNIQUE (DNAME),
+          FOREIGN KEY  (MGR_SSN)    REFERENCES  EMPLOYEE(SSN)
+);
+ALTER TABLE EMPLOYEE
+      ADD FOREIGN KEY  (SUPER_SSN)  REFERENCES  EMPLOYEE(SSN);
+ALTER TABLE EMPLOYEE
+      ADD FOREIGN KEY  (DNO)  REFERENCES  DEPARTMENT(DNUMBER);
+CREATE TABLE DEPT_LOCATIONS (
+          DNUMBER          INT         NOT NULL,
+          DLOCATION       VARCHAR(200)          NOT NULL,
+          PRIMARY KEY(DNUMBER, DLOCATION),
+          FOREIGN KEY  (DNUMBER)  REFERENCES  DEPARTMENT(DNUMBER)
+);
+#ALTER TABLE DEPT_LOCATIONS
+  #    ADD FOREIGN KEY  (DNUMBER)  REFERENCES  DEPARTMENT(DNUMBER);
+CREATE TABLE PROJECT (
+          PNAME          VARCHAR(40)          NOT NULL,
+          PNUMBER            INT                   NOT NULL,
+          PLOCATION          VARCHAR(200)          NOT NULL,
+          DNUM          INT          NOT NULL,
+          PRIMARY KEY(PNUMBER),
+          UNIQUE(PNAME, PLOCATION, DNUM),
+          FOREIGN KEY  (DNUM)  REFERENCES  DEPARTMENT(DNUMBER)
+);
+#ALTER TABLE PROJECT
+  #    ADD FOREIGN KEY  (DNUM)  REFERENCES DEPARTMENT(DNUMBER);
+CREATE TABLE WORK_ON (
+          ESSN          CHAR(9)          NOT NULL,
+          PNO            INT                   NOT NULL,
+          HOURS       DECIMAL         NOT NULL,
+          PRIMARY KEY(ESSN, PNO),
+          FOREIGN KEY (ESSN)  REFERENCES  EMPLOYEE(SSN), 
+          FOREIGN KEY (PNO)  REFERENCES PROJECT(PNUMBER)
+);
+#ALTER TABLE WORK_ON
+  #   ADD FOREIGN KEY  (ESSN)  REFERENCES  EMPLOYEE(SSN),
+    # ADD FOREIGN KEY  (PNO)  REFERENCES  PROJECT(PNUMBER);
+CREATE TABLE DEPENDENT (
+          ESSN          CHAR(9)          NOT NULL,
+          DEPENDENT_NAME          VARCHAR(40)          NOT NULL,
+          SEX         CHAR,
+          BDATE          DATE,
+          RELATIONSHIP          CHAR,
+          PRIMARY KEY(ESSN, DEPENDENT_NAME),
+          FOREIGN KEY  (ESSN)  REFERENCES  EMPLOYEE(SSN)
+);
+#ALTER TABLE DEPENDENT
+  #   ADD FOREIGN KEY  (ESSN)  REFERENCES EMPLOYEE(SSN);
